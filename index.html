@@ -4,25 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Application Météo</title>
+    <title>Métajour</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
-
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
-    
 </head>
 <body>
     <div id="app">
-        <h1>Application Météo</h1>
-        <div id="menu" aria-label="Recherche de la météo">
-            <input type="text" id="cityInput" placeholder="Entrez le nom d'une ville" aria-label="Nom de la ville">
-            <button type="button" id="showWeatherBtn">Afficher</button>
+        <h1>Métajour</h1>
+
+        <div id="controls">
+            <input type="text" id="cityInput" placeholder="Enter city..." aria-label="City">
+            <button id="showWeatherBtn">Afficher</button>
         </div>
-        <div id="data" aria-live="polite"></div>
-        <div id="map"></div> 
+
+        <div id="dashboard">
+            <div id="today-forecast">
+
+            </div>
+
+            <div id="map"></div>
+        </div>
+
+        <div class="next-days-forecast">
+           
+        </div>
     </div>
-    
 </body>
 </html>
