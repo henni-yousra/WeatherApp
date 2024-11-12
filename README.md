@@ -2,7 +2,7 @@
 
 Métajour est une application météo construite avec HTML, CSS et JavaScript. Elle permet aux utilisateurs de rechercher les conditions météorologiques d'une ville spécifique ou d'afficher la météo à leur emplacement actuel grâce à la géolocalisation. L'application fournit une vue de la carte, les prévisions météorologiques d'aujourd'hui et celles pour les prochains jours.
 
-![ui](chemin/vers/demo.jpg)
+![ui](demo.jpg)
 
 
 ## Fonctionnalités
@@ -13,7 +13,7 @@ Métajour est une application météo construite avec HTML, CSS et JavaScript. E
 - **Prévisions météo** : Affiche les conditions météorologiques actuelles et les prévisions sur 5 jours.
 - **Animation de pluie** : Un effet visuel de pluie est affiché si des précipitations sont prévues.
 
-![demo](chemin/vers/pluie_demo.jpg)
+![demo](pluie_demo.jpg)
 
 ## Technologies Utilisées
 
