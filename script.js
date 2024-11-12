@@ -1,123 +1,133 @@
 const elements = {
-    button: document.getElementById('showWeatherBtn'),
-    input: document.getElementById('cityInput'),
-    todayForecast: document.getElementById('today-forecast'),
-    nextDaysForecast: document.querySelector('.next-days-forecast')
+    bouton: document.getElementById('boutonMeteo'),
+    saisie: document.getElementById('saisieVille'),
+    previsionAujourdhui: document.getElementById('previsionAujourdhui'),
+    previsionJoursSuivants: document.querySelector('.previsionJoursSuivants')
 };
 
-function init() {
-    elements.button.addEventListener('click', handleButtonClick);
-    elements.input.addEventListener('keypress', handleKeyPress);
-    fetchWeatherData("Bordeaux");
+function initialiser() {
+    elements.bouton.addEventListener('click', gererClicBouton);
+    elements.saisie.addEventListener('keypress', (evenement) => {
+        if (evenement.key === 'Enter') gererClicBouton();
+    });
+    obtenirDonneesMeteo("Bordeaux");
 }
 
-const map = L.map('map').setView([44.8378, -0.5792], 10);
+const carte = L.map('carte').setView([44.8378, -0.5792], 10);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+}).addTo(carte);
 
-map.on('click', async (event) => {
-    const { lat, lng } = event.latlng;
+carte.on('click', async ({ latlng: { lat, lng } }) => {
     try {
-        const city = await getCityFromCoordinates(lat, lng);
-        city ? fetchWeatherData(city) : displayError("Impossible de trouver la ville à partir des coordonnées.");
-    } catch (error) {
-        displayError("Erreur lors de la récupération de la ville.");
+        const ville = await obtenirVilleDepuisCoordonnees(lat, lng);
+        ville ? obtenirDonneesMeteo(ville) : afficherErreur("Impossible de trouver la ville.");
+    } catch (erreur) {
+        afficherErreur("Erreur lors de la récupération de la ville.");
     }
 });
 
-async function getCityFromCoordinates(lat, lng) {
+async function obtenirVilleDepuisCoordonnees(lat, lng) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`;
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Erreur de récupération des données.");
+        const reponse = await fetch(url);
+        if (!reponse.ok) throw new Error("Erreur de récupération des données.");
         
-        const data = await response.json();
-        return data.address.city || data.address.town || data.address.village || null;
-    } catch (error) {
-        console.error("Erreur avec Nominatim:", error);
+        const { address } = await reponse.json();
+        return address.city || address.town || address.village || null;
+    } catch (erreur) {
+        console.error("Erreur avec Nominatim:", erreur);
         return null;
     }
 }
 
-function handleButtonClick() {
-    const city = getInputValue();
-    city ? fetchWeatherData(city) : displayError("Veuillez entrer un nom de ville.");
-}
-
-function handleKeyPress(event) {
-    if (event.key === 'Enter') handleButtonClick();
-}
-
-function getInputValue() {
-    return elements.input.value.trim();
-}
-
-async function fetchWeatherData(city) {
-    const url = `https://www.prevision-meteo.ch/services/json/${city}`;
-    displayLoading();
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Erreur : ${response.status}`);
-
-        const data = await response.json();
-        if (data.errors) throw new Error("Ville non trouvée.");
-
-        displayWeatherData(data);
-    } catch (error) {
-        displayError(error.message);
+function gererClicBouton() {
+    const ville = elements.saisie.value.trim();
+    if (ville) {
+        obtenirCoordonneesVille(ville)
+            .then(coordonnees => {
+                if (coordonnees) {
+                    carte.setView(coordonnees, 10); 
+                    obtenirDonneesMeteo(ville);
+                } else {
+                    afficherErreur("Ville non trouvée.");
+                }
+            })
+            .catch(() => afficherErreur("Erreur lors de la récupération des coordonnées."));
+    } else {
+        afficherErreur("Veuillez entrer un nom de ville.");
     }
 }
 
-function displayWeatherData(data) {
-    const { name, sunrise, sunset } = data.city_info;
-    const current = data.current_condition;
+async function obtenirCoordonneesVille(ville) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${ville}&limit=1`;
+    try {
+        const reponse = await fetch(url);
+        if (!reponse.ok) throw new Error("Erreur de récupération des données.");
 
-    elements.todayForecast.innerHTML = '';
-    elements.nextDaysForecast.innerHTML = '';
+        const [data] = await reponse.json();
+        return data ? { lat: parseFloat(data.lat), lng: parseFloat(data.lon) } : null;
+    } catch (erreur) {
+        console.error("Erreur avec Nominatim:", erreur);
+        return null;
+    }
+}
 
-    const todayForecast = document.createElement('div');
-    todayForecast.classList.add('today-forecast');
-    todayForecast.innerHTML = `
-        <h2>Aujourd'hui à ${name}  </h2> <strong> 
-        <h3>${data.fcst_day_0.day_short} ${data.fcst_day_0.date}</h3>
-        <p><strong>Température actuelle :</strong> ${current.tmp}°C</p>
-        <p><strong>Max :</strong> ${data.fcst_day_0.tmax}°C / <strong>Min :</strong> ${data.fcst_day_0.tmin}°C</p>
-        <p><strong>Vent :</strong> ${current.wnd_spd} km/h</p>
-        <p><strong>Humidité :</strong> ${current.humidity}%</p>
-        <p><strong>Pression :</strong> ${current.pressure} mb</p>
-        <img src="${data.fcst_day_0.icon_big}" alt="${data.fcst_day_0.condition}" width="80" height="80">
-        <p>${data.fcst_day_0.condition}  </p> </strong>
+
+async function obtenirDonneesMeteo(ville) {
+    const url = `https://www.prevision-meteo.ch/services/json/${ville}`;
+    afficherChargement();
+
+    try {
+        const reponse = await fetch(url);
+        if (!reponse.ok) throw new Error(`Erreur : ${reponse.status}`);
+
+        const donnees = await reponse.json();
+        if (donnees.errors) throw new Error("Ville non trouvée.");
+
+        afficherDonneesMeteo(donnees);
+    } catch (erreur) {
+        afficherErreur(erreur.message);
+    }
+}
+
+function afficherDonneesMeteo(donnees) {
+    const { name } = donnees.city_info;
+    const { tmp, wnd_spd, humidity } = donnees.current_condition;
+    const { tmax, tmin, icon_big, condition } = donnees.fcst_day_0;
+
+    elements.previsionAujourdhui.innerHTML = `
+        <div class="previsionAujourdhui">
+            <h2>${name}</h2>
+            <p><strong>A l'instant :</strong> ${tmp}°C</p>
+            <p><strong>Max :</strong> ${tmax}°C / <strong>Min :</strong> ${tmin}°C</p>
+            <p><strong>Vent :</strong> ${wnd_spd} km/h</p>
+            <p><strong>Humidité :</strong> ${humidity}%</p>
+            <img src="${icon_big}" alt="${condition}" width="80" height="80">
+            <p>${condition}</p>
+        </div>
     `;
-    elements.todayForecast.appendChild(todayForecast);
 
-    data.fcst_day_1 && elements.nextDaysForecast.appendChild(renderDailyForecast(data.fcst_day_1));
-    data.fcst_day_2 && elements.nextDaysForecast.appendChild(renderDailyForecast(data.fcst_day_2));
-    data.fcst_day_3 && elements.nextDaysForecast.appendChild(renderDailyForecast(data.fcst_day_3));
-    data.fcst_day_4 && elements.nextDaysForecast.appendChild(renderDailyForecast(data.fcst_day_4));
+    elements.previsionJoursSuivants.innerHTML = donnees.fcst_day_1 ? renderiserPrevisionsSuivantes([donnees.fcst_day_0, donnees.fcst_day_1, donnees.fcst_day_2, donnees.fcst_day_3, donnees.fcst_day_4]) : '';
 }
 
-function renderDailyForecast(dayData) {
-    const forecastDiv = document.createElement('div');
-    forecastDiv.classList.add('small-day-forecast');
-    forecastDiv.innerHTML = `
-        <h3>${dayData.day_short} ${dayData.date}</h3>
-        <strong>
-        <img src="${dayData.icon}" alt="${dayData.condition}" width="50" height="50">
-        <p>${dayData.condition}</p> </strong>
-        <p><strong>Max :</strong> ${dayData.tmax}°C / <strong>Min :</strong> ${dayData.tmin}°C</p>
-    `;
-    return forecastDiv;
+function renderiserPrevisionsSuivantes(previsions) {
+    return previsions.map(({ day_short, date, icon, condition, tmax, tmin }) => `
+        <div class="petitePrevisionJour">
+            <h3>${day_short} ${date}</h3>
+            <img src="${icon}" alt="${condition}" width="50" height="50">
+            <p>${condition}</p>
+            <p><strong>Max :</strong> ${tmax}°C / <strong>Min :</strong> ${tmin}°C</p>
+        </div>
+    `).join('');
 }
 
-function displayLoading() {
-    elements.todayForecast.innerHTML = `<p class="loading">Chargement...</p>`;
+function afficherChargement() {
+    elements.previsionAujourdhui.innerHTML = `<p class="chargement">Chargement...</p>`;
 }
 
-function displayError(message) {
-    elements.todayForecast.innerHTML = `<p class="error">${message}</p>`;
+function afficherErreur(message) {
+    elements.previsionAujourdhui.innerHTML = `<p class="erreur">${message}</p>`;
 }
 
-init();
+initialiser();

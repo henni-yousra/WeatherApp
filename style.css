@@ -1,150 +1,120 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background: #0d1117;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e2a47 0%, #3d1e5f 100%);
     color: #fff;
-    display: block;
     text-align: center;
     min-height: 100vh;
     margin: 0;
     overflow: auto;
-    background: linear-gradient(135deg, #1e2a47 0%, #3d1e5f 100%);
-    animation: backgroundAnimation 5s infinite alternate;
 }
 
-#dashboard {
+h1, .previsionAujourdhui h2, .petitePrevisionJour h3, .chargement {
+    color: #00d0ff;
+}
+.erreur {
+    color: #ff6b6b;
+}
+
+#tableauDeBord {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 30px;
-    background-color: rgba(50, 50, 50, 0.8);
+    background: rgba(50, 50, 50, 0.8);
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    animation: slideUp 1s ease-out;
+    animation: glisserHaut 1.5s ease-in-out;
 }
 
-#map {
+#carte {
     height: 500px;
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    animation: mapFadeIn 1s ease-out;
+    cursor: crosshair; 
+    animation: apparaitre 1.5s ease-in-out;
 }
 
-#content {
+#controle {
     display: flex;
-    flex-direction: row;
-    text-align: left;
-}
-
-h1 {
-    font-size: 2.5rem;
-    color: #1ed1fc;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-    font-weight: 700;
-    text-transform: uppercase;
-    animation: fadeIn 1s ease-out;
-}
-
-#controls {
-    margin: 30px;
-    max-width: 900px;
-    display: flex;
-    flex-direction: row;
     gap: 10px;
+    justify-content: center;
+    margin: 30px;
 }
 
-#cityInput {
-    max-height: 25px;
+#saisieVille, #boutonMeteo {
     padding: 12px 20px;
-    border-radius: 10px;
     font-size: 1.2rem;
-    border: 2px solid #1ed1fc;
-    background-color: transparent;
-    color: #fff;
-    outline: none;
-    width: 100%;
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    width: 50%;
+    transition: 0.3s ease-in-out;
 }
-
-#cityInput:focus {
+#saisieVille {
+    border: 2px solid #1ed1fc;
+    background: transparent;
+    color: #fff;
+}
+#saisieVille:focus {
     border-color: #00d0ff;
 }
-
-#showWeatherBtn {
-    padding: 12px 20px;
-    font-size: 1.2rem;
+#boutonMeteo {
     background-color: #1ed1fc;
     border: none;
-    border-radius: 10px;
     color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
     width: 250px;
 }
-
-#showWeatherBtn:hover {
+#boutonMeteo:hover {
     background-color: #00d0ff;
-    transform: scale(1.1);
 }
 
-#data {
-    text-align: left;
-    color: #f0f0f0;
-}
 
-.today-forecast {
-    background-color: rgba(31, 40, 50, 0.7);
-    padding: 20px;
-    border-radius: 15px;
-    margin-top: 20px;
-    animation: slideUp 0.6s ease-out;
-}
-
-.today-forecast h2 {
-    font-size: 2rem;
-    color: #00d0ff;
-}
-
-#data p {
-    font-size: 1.2rem;
-    margin: 5px 0;
-}
-
-.small-day-forecast {
-    background-color: rgba(31, 40, 50, 0.7);
+.previsionAujourdhui, .petitePrevisionJour {
+    background: rgba(31, 40, 50, 0.7);
     border-radius: 10px;
-    padding: 15px;
-    margin: 2px;
-    animation: fadeInCard 1s ease-out;
-    flex: 1;
+    padding: 20px;
     text-align: center;
-    max-width: 200px;
+    animation: apparaitre 1s ease-in-out;
 }
-
-.next-days-forecast {
+.previsionJoursSuivants {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px;
     justify-content: center;
-    gap: 2px;
-    margin-top: 30px;
+    margin: 30px;
 }
 
-.small-day-forecast img {
-    transition: transform 0.3s ease;
+.previsionAujourdhui img, .petitePrevisionJour img {
+    animation: pulse 3s infinite ease-in-out;
 }
 
-.small-day-forecast:hover img {
-    transform: scale(1.2);
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1); 
+    }
+    50% {
+        transform: scale(1.1); 
+    }
 }
 
-.loading {
-    color: #00d0ff;
+@keyframes apparaitre {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.error {
-    color: #ff6b6b;
+@keyframes glisserHaut {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
