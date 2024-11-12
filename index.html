@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Métajour</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="script.js" defer></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="application">
+        <h1>Métajour</h1>
+        <div id="controle">
+            <input type="text" id="saisieVille" placeholder="Entrer une ville..." aria-label="Ville">
+            <button id="boutonMeteo">Afficher</button>
+        </div>
+        <div id="tableauDeBord">
+            
+
+            <div id="previsionAujourdhui"></div>
+            <div id="carte"></div>
+        </div>
+        <h3>Prévisions sur les prochains jours</h3>
+        <div class="previsionJoursSuivants"></div>
+        <div class="rain"></div>
+    </div>
+</body>
+</html>
