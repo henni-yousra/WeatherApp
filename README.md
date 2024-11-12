@@ -19,17 +19,6 @@ Métajour est une application web de prévisions météo qui permet aux utilisat
 - **API Nominatim** : Service de géolocalisation utilisé pour convertir les coordonnées de la carte en noms de villes.
 - **API Prevision Météo** : Fournit les données météo actuelles et les prévisions pour la ville sélectionnée.
 
-## Instructions d'Installation
-
-1. **Cloner le dépôt** : `git clone <url-du-dépôt>`
-2. **Ouvrir `index.html`** dans un navigateur web.
-
-## Structure des Fichiers
-
-- `index.html` : Fichier HTML principal définissant la structure et la mise en page de l'application.
-- `style.css` : Feuille de style définissant l'apparence de l'application.
-- `script.js` : Fichier JavaScript contenant les fonctionnalités principales, y compris les écouteurs d'événements et les appels d'API.
-
 ## Utilisation
 
 1. **Entrer un nom de ville** :
