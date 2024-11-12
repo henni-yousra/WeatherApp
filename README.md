@@ -13,7 +13,7 @@ Métajour est une application météo construite avec HTML, CSS et JavaScript. E
 - **Prévisions météo** : Affiche les conditions météorologiques actuelles et les prévisions sur 5 jours.
 - **Animation de pluie** : Un effet visuel de pluie est affiché si des précipitations sont prévues.
 
-![demo](pluie demo.jpg)
+![demo](pluie_demo.jpg)
 
 ## Technologies Utilisées
 
